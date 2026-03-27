@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Divya's Studio | Freelance Beauty Services in Chennai</title>
+    <meta name="description" content="Premium doorstep beauty services in Chennai by Divya, B&WSCC certified cosmetologist. Hair, skin, and professional makeup services.">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Quintessential&family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="header">
+        <nav class="nav-container">
+            <div class="logo">
+                <a href="index.html" style="text-decoration: none;">
+                    <div class="brand-text">DIVYA'S <span>STUDIO</span></div>
+                </a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#services">Services</a></li>
+                <li><a href="portfolio.html">Portfolio</a></li>
+                <li><a href="jewellery.html">Jewellery</a></li>
+                <li><a href="#features">Why Us</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+            <div class="nav-right">
+                <a href="#" onclick="showLogin()" class="admin-btn">Admin</a>
+                <div class="booking-btn"><a href="#contact">Book Now</a></div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section id="home" class="hero parallax-bg" style="background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.4)), url('assets/hero.png');">
+            <div class="hero-content">
+                <h1 class="reveal-text">Define <span>Your Look</span></h1>
+                <p>Artistic Doorstep Hair & Beauty</p>
+                <div class="cta-group">
+                    <a href="#services" class="btn primary">Explore Services</a>
+                    <a href="#contact" class="btn secondary">Get in Touch</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="about">
+            <div class="container">
+                <div class="about-grid reveal">
+                    <div class="about-text">
+                        <label class="subtitle">Meet Divya</label>
+                        <h2>Crafting Perfection with <span>Expert Hands</span></h2>
+                        <p>Hi, I'm Divya, a B&WSCC govt certified cosmetologist from Lakme Academy, Chennai. With a passion for beauty and a commitment to excellence, I bring salon-grade services directly to your doorstep.</p>
+                        <p>Our mission is to provide premium beauty care that fits your schedule, ensuring you look and feel your absolute best for every occasion.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Services Section -->
+        <section id="services" class="services">
+            <div class="container">
+                <div class="section-title">
+                    <label>Our Services</label>
+                    <h2>Expert Beauty Care</h2>
+                </div>
+                
+                <div class="services-grid">
+                    <!-- Hair Services -->
+                    <div class="service-card reveal fade-in-up">
+                        <div class="service-image">
+                            <img src="assets/hair.png" alt="Professional Hair Styling">
+                        </div>
+                        <h3>Hair Care</h3>
+                        <ul class="stagger-list">
+                            <li>Hair Cut</li>
+                            <li>Hair Coloring</li>
+                            <li>Hair Spa</li>
+                            <li>Oil Massage</li>
+                            <li>Smoothing/Straightening</li>
+                            <li>Keratin / Botox</li>
+                            <li>Hairstyling</li>
+                        </ul>
+                    </div>
+
+                    <!-- Skin Services -->
+                    <div class="service-card reveal fade-in-up" style="transition-delay: 0.2s;">
+                        <div class="service-image">
+                            <img src="assets/skin.png" alt="Luxury Skin Care">
+                        </div>
+                        <h3>Skin Care</h3>
+                        <ul class="stagger-list">
+                            <li>Threading / Waxing</li>
+                            <li>Facial / Bleach</li>
+                            <li>Manicure</li>
+                            <li>Pedicure</li>
+                        </ul>
+                    </div>
+
+                    <!-- Makeup Services -->
+                    <div class="service-card reveal fade-in-up" style="transition-delay: 0.4s;">
+                        <div class="service-image">
+                            <img src="assets/makeup.png" alt="Bridal & Glam Makeup">
+                        </div>
+                        <h3>Makeup Artistry</h3>
+                        <ul class="stagger-list">
+                            <li>Bridal & Engagement</li>
+                            <li>Party & Glam Makeup</li>
+                            <li>Nude & Guest Makeup</li>
+                            <li>Puberty & Baby Shower</li>
+                            <li>Bridesmaid Makeup</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section id="features" class="features">
+            <div class="container">
+                <div class="features-grid">
+                    <div class="feature-item reveal">
+                        <div class="icon">🏠</div>
+                        <h3>Doorstep Service</h3>
+                        <p>Enjoy premium beauty treatments in the comfort of your home.</p>
+                    </div>
+                    <div class="feature-item reveal">
+                        <div class="icon">✨</div>
+                        <h3>Premium Products</h3>
+                        <p>We use only high-end, certified products for best results.</p>
+                    </div>
+                    <div class="feature-item reveal">
+                        <div class="icon">💎</div>
+                        <h3>Affordable Pricing</h3>
+                        <p>Luxury beauty services that don't break the bank.</p>
+                    </div>
+                    <div class="feature-item reveal">
+                        <div class="icon">🎨</div>
+                        <h3>Custom Solutions</h3>
+                        <p>Tailored treatments specifically for your skin and hair type.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="contact">
+            <div class="container">
+                <div class="contact-box">
+                    <h2>Ready for a Transformation?</h2>
+                    <p>Located in Chennai. Available for bookings via WhatsApp or Phone.</p>
+                    <div class="contact-details">
+                        <a href="https://wa.me/919944160024" class="contact-btn">Message on WhatsApp</a>
+                        <p>Or Call: <span>+91 99441 60024</span></p>
+                        <p class="insta-link">Follow on Instagram: <a href="https://instagram.com/divi.1702" target="_blank">@divi.1702</a></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2026 Divya's Studio. All rights reserved.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

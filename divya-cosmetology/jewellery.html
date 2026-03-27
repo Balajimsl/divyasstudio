@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bridal Jewellery | Divya's Studio</title>
+    <meta name="description" content="Explore our premium collection of Bridal Jewellery sets. From traditional Temple jewellery to modern Diamond sets.">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Quintessential&family=Montserrat:wght@300;400;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .jewellery-header {
+            padding: 15rem 0 8rem;
+            text-align: left;
+            background: var(--bg-dark);
+            color: var(--white);
+        }
+        .jewellery-header h1 { 
+            font-size: 8rem; 
+            margin: 0; 
+            letter-spacing: -5px;
+            line-height: 0.8;
+            max-width: 900px;
+        }
+        .jewellery-header h1 span {
+            display: block;
+            color: transparent;
+            -webkit-text-stroke: 1px var(--white);
+        }
+        .jewellery-gallery { padding: 8rem 0; }
+        .jewellery-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 3rem;
+        }
+        .jewellery-card {
+            background: var(--white);
+            border: 1px solid #EEE;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+        }
+        .jewellery-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-5px);
+            box-shadow: var(--shadow);
+        }
+        .jewellery-card .img-container {
+            width: 100%;
+            height: 400px;
+            overflow: hidden;
+        }
+        .jewellery-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+            filter: grayscale(100%);
+        }
+        .jewellery-card:hover img {
+            filter: grayscale(0%);
+            transform: scale(1.05);
+        }
+        .jewellery-details {
+            padding: 2rem;
+            text-align: center;
+        }
+        .jewellery-details h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            letter-spacing: 0;
+        }
+        .jewellery-details .price {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 900;
+            color: var(--text-muted);
+            font-size: 1.2rem;
+            letter-spacing: 1px;
+        }
+        .jewellery-details .price span {
+            color: var(--primary);
+            font-size: 1rem;
+            margin-right: 2px;
+        }
+
+        @media (max-width: 1024px) {
+            .jewellery-grid { grid-template-columns: repeat(2, 1fr); gap: 2rem; }
+            .jewellery-header h1 { font-size: 6rem; }
+        }
+        @media (max-width: 968px) {
+            .jewellery-header h1 { font-size: 5rem; }
+        }
+        @media (max-width: 576px) {
+            .jewellery-grid { grid-template-columns: 1fr; }
+            .jewellery-header { padding: 10rem 0 4rem; }
+            .jewellery-header h1 { font-size: 3.5rem; line-height: 1; margin-bottom: 1rem; }
+            .jewellery-card .img-container { height: 350px; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <nav class="nav-container">
+            <div class="logo">
+                <a href="index.html" style="text-decoration: none;">
+                    <div class="brand-text">DIVYA'S <span>STUDIO</span></div>
+                </a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html#home">Home</a></li>
+                <li><a href="portfolio.html">Portfolio</a></li>
+                <li><a href="jewellery.html" class="active">Jewellery</a></li>
+                <li><a href="index.html#contact">Contact</a></li>
+            </ul>
+            <div class="nav-right">
+                <a href="#" onclick="showLogin()" class="admin-btn">Admin</a>
+                <div class="booking-btn"><a href="index.html#contact">Book Now</a></div>
+            </div>
+        </nav>
+    </header>
+
+    <section class="jewellery-header">
+        <div class="container">
+            <label class="subtitle" style="color: var(--accent);">Our Collection</label>
+            <h1>Bridal <span>Jewellery Set</span></h1>
+        </div>
+    </section>
+
+    <main class="jewellery-gallery">
+        <div class="container">
+            <div class="jewellery-grid" id="jewelleryDisplay">
+                <!-- Items populated by JS -->
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2026 Divya's Studio. All rights reserved.</p>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        const STORAGE_KEY = 'divya_jewellery_data';
+        const DEFAULT_DATA = [
+            {id: 1, name: "Temple Antique Gold", price: "2,500", image: "assets/jewellery/temple1.png"},
+            {id: 2, name: "Royal Bridal Gold", price: "3,200", image: "assets/makeup.png"},
+            {id: 3, name: "Glistening Diamond", price: "5,000", image: "assets/hair.png"}
+        ];
+
+        function renderJewellery() {
+            const data = JSON.parse(localStorage.getItem(STORAGE_KEY)) || DEFAULT_DATA;
+            const container = document.getElementById('jewelleryDisplay');
+            container.innerHTML = '';
+
+            const activeItems = data.filter(item => item.status !== 'inactive');
+
+            activeItems.forEach((item, index) => {
+                container.innerHTML += `
+                    <div class="jewellery-card reveal fade-in-up" style="transition-delay: ${index * 0.1}s">
+                        <div class="img-container">
+                            <img src="${item.image}" alt="${item.name}">
+                        </div>
+                        <div class="jewellery-details">
+                            <h3>${item.name}</h3>
+                            <p class="price"><span>₹</span> ${item.price}</p>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            // Re-apply reveal animation if observer is already running
+            if (window.revealObserver) {
+                document.querySelectorAll('.reveal').forEach(el => window.revealObserver.observe(el));
+            }
+        }
+
+        renderJewellery();
+    </script>
+</body>
+</html>

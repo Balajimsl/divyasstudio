@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Divya's Studio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Quintessential&family=Montserrat:wght@300;400;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script>
+        if (sessionStorage.getItem('divya_admin_logged_in') !== 'true') {
+            window.location.href = 'index.html';
+        }
+    </script>
+    <style>
+        .admin-hero { padding: 12rem 0 6rem; background: var(--bg-dark); color: var(--white); }
+        .admin-hero h1 { font-size: 6rem; letter-spacing: -3px; line-height: 0.9; margin: 0; }
+        .admin-hero h1 span { display: block; color: transparent; -webkit-text-stroke: 1px var(--white); }
+        .dashboard-content { padding: 8rem 0; background: #fff; }
+        .card-container { margin-bottom: 4rem; border: 1px solid #EEE; padding: 3rem; }
+        .tab-nav { display: flex; gap: 2rem; margin-bottom: 4rem; border-bottom: 1px solid #EEE; padding-bottom: 1rem; }
+        .tab-btn { background: none; border: none; font-weight: 900; text-transform: uppercase; font-size: 0.8rem; cursor: pointer; letter-spacing: 2px; color: #BBB; transition: var(--transition); }
+        .tab-btn.active { color: #000; border-bottom: 2px solid #000; padding-bottom: 0.5rem; }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem; }
+        .form-group label { display: block; font-weight: 900; text-transform: uppercase; font-size: 0.75rem; color: #999; margin-bottom: 0.5rem; }
+        .form-group input, .form-group select { width: 100%; padding: 1.2rem; border: 1px solid #EEE; font-family: 'Montserrat', sans-serif; }
+        .item-table { width: 100%; border-collapse: collapse; margin-top: 2rem; }
+        .item-table th, .item-table td { text-align: left; padding: 1.5rem; border-bottom: 1px solid #F5F5F5; }
+        .img-preview { width: 80px; height: 100px; object-fit: cover; border: 1px solid #EEE; }
+        .action-btns { display: flex; gap: 1rem; }
+        .btn-action { padding: 0.8rem 1.5rem; border: 1px solid #000; background: none; font-weight: 900; text-transform: uppercase; font-size: 0.7rem; cursor: pointer; }
+        .btn-action.delete { background: #000; color: #FFF; }
+        
+        /* Security Tab Styles */
+        .security-form { max-width: 500px; }
+
+        @media (max-width: 968px) {
+            .form-grid { grid-template-columns: 1fr; gap: 1.5rem; }
+            .admin-hero h1 { font-size: 4rem; }
+            .tab-nav { flex-wrap: wrap; gap: 1rem; }
+            #listContainer { overflow-x: auto; padding-bottom: 1rem; }
+            .item-table { min-width: 900px; } /* Ensures table scrolls horizontally instead of squishing */
+            .card-container { padding: 2rem 1.5rem; }
+        }
+        @media (max-width: 576px) {
+            .admin-hero { padding: 10rem 0 4rem; }
+            .admin-hero h1 { font-size: 3rem; }
+            .dashboard-content { padding: 4rem 0; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <nav class="nav-container">
+            <div class="logo">
+                <a href="index.html" style="text-decoration: none;">
+                    <div class="brand-text">DIVYA'S <span>STUDIO</span></div>
+                </a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="portfolio.html">Portfolio</a></li>
+                <li><a href="jewellery.html">Jewellery</a></li>
+            </ul>
+            <div class="nav-right">
+                <a href="#" onclick="logoutAdmin()" class="admin-btn">Logout</a>
+                <div class="booking-btn"><a href="#" onclick="logoutAdmin()">Exit Admin</a></div>
+            </div>
+        </nav>
+    </header>
+
+    <section class="admin-hero">
+        <div class="container">
+            <label class="subtitle" style="color: var(--accent);">Administration</label>
+            <h1>Global <span>Manager</span></h1>
+        </div>
+    </section>
+
+    <main class="dashboard-content">
+        <div class="container">
+            <div class="tab-nav">
+                <button class="tab-btn active" onclick="switchTab('jewellery', this)">Jewellery</button>
+                <button class="tab-btn" onclick="switchTab('portfolio', this)">Portfolio</button>
+                <button class="tab-btn" onclick="switchTab('security', this)">Security</button>
+            </div>
+
+            <!-- Management Form (Jewellery/Portfolio) -->
+            <div id="itemForm" class="card-container" style="display: none;">
+                <h3 id="formTitle">Add New Item</h3>
+                <form onsubmit="saveItem(event)">
+                    <input type="hidden" id="itemId">
+                    <input type="hidden" id="itemType">
+                    <div class="form-grid">
+                        <div id="field1" class="form-group">
+                            <label>Name / Title</label>
+                            <input type="text" id="itemName" required>
+                        </div>
+                        <div id="field2" class="form-group">
+                            <label id="label2">Price / Subtitle</label>
+                            <input type="text" id="itemMeta" required>
+                        </div>
+                        <div id="field3" class="form-group" style="display: none;">
+                            <label>Category</label>
+                            <select id="itemCategory">
+                                <option value="hair">Hair</option>
+                                <option value="skin">Skin</option>
+                                <option value="makeup">Makeup</option>
+                            </select>
+                        </div>
+                        <div id="field4" class="form-group" style="display: none;">
+                            <label>Subcategory (e.g. Bridal, Party, Cut)</label>
+                            <input type="text" id="itemSubcategory" placeholder="e.g. Bridal">
+                        </div>
+                        <div class="form-group">
+                            <label>Visibility Status</label>
+                            <select id="itemStatus">
+                                <option value="active">Active (Visible)</option>
+                                <option value="inactive">Inactive (Hidden)</option>
+                            </select>
+                        </div>
+                        <div id="field5" class="form-group" style="display: none; grid-column: span 2;">
+                            <label>Gallery Images (Upload multiple files)</label>
+                            <input type="file" id="galleryUpload" accept="image/*" multiple onchange="previewGalleryUpload(this)">
+                            <div id="galleryPreview" style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px;"></div>
+                        </div>
+                        <div class="form-group">
+                            <label>Upload Cover Image</label>
+                            <input type="file" id="imageUpload" accept="image/*" onchange="previewUpload(this)">
+                        </div>
+                    </div>
+                    <div id="uploadPreview" style="margin-bottom: 2rem; display: none;">
+                        <label style="font-weight: 900; font-size: 0.7rem; color: #999; text-transform: uppercase;">Preview</label>
+                        <img id="prevImg" src="" style="width: 150px; height: 200px; object-fit: cover; display: block; margin-top: 0.5rem; border: 1px solid #EEE;">
+                    </div>
+                    <div class="action-btns">
+                        <button type="submit" class="btn primary">Apply Changes</button>
+                        <button type="button" class="btn secondary" onclick="hideAddForm()">Cancel</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- List Display (Jewellery/Portfolio) -->
+            <div id="listContainer" class="card-container">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                    <h3 id="tableTitle">Jewellery Listings</h3>
+                    <button class="btn primary" onclick="showAddForm()">+ Add Item</button>
+                </div>
+                <table class="item-table">
+                    <thead>
+                        <tr>
+                            <th>Image</th>
+                            <th>Title/Name</th>
+                            <th>Details</th>
+                            <th id="catHeader" style="display: none;">Category</th>
+                            <th id="subHeader" style="display: none;">Subcategory</th>
+                            <th id="galleryHeader" style="display: none;">Gallery</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adminTableBody"></tbody>
+                </table>
+            </div>
+
+            <!-- Security Section (Hidden by default) -->
+            <div id="securitySection" class="card-container" style="display: none;">
+                <h3>Account Security</h3>
+                <p style="color: var(--text-muted); margin-bottom: 3rem;">Update your administrative password.</p>
+                <form onsubmit="handlePassUpdate(event)" class="security-form">
+                    <div class="form-group" style="margin-bottom: 1.5rem; position: relative;">
+                        <label>Current Password</label>
+                        <input type="password" id="currPass" required>
+                        <span onclick="toggleSecurityPass('currPass', this)" style="position:absolute; right:1rem; top:2.8rem; cursor:pointer; opacity:0.5;">👁️</span>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 1.5rem; position: relative;">
+                        <label>New Password</label>
+                        <input type="password" id="newPass" required>
+                        <span onclick="toggleSecurityPass('newPass', this)" style="position:absolute; right:1rem; top:2.8rem; cursor:pointer; opacity:0.5;">👁️</span>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 2rem; position: relative;">
+                        <label>Confirm New Password</label>
+                        <input type="password" id="confirmPass" required>
+                        <span onclick="toggleSecurityPass('confirmPass', this)" style="position:absolute; right:1rem; top:2.8rem; cursor:pointer; opacity:0.5;">👁️</span>
+                    </div>
+                    <button type="submit" class="btn primary">Update Password</button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2026 Divya's Studio. All rights reserved.</p>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        const KEYS = {
+            jewellery: 'divya_jewellery_data',
+            portfolio: 'divya_portfolio_data'
+        };
+
+        const DEFAULTS = {
+            jewellery: [
+                {id: 1, name: "Temple Antique Gold", price: "2,500", image: "assets/jewellery/temple1.png"},
+                {id: 2, name: "Royal Bridal Gold", price: "3,200", image: "assets/makeup.png"},
+                {id: 3, name: "Glistening Diamond", price: "5,000", image: "assets/hair.png"}
+            ],
+            portfolio: [
+                {id: 1, category: "hair", subcategory: "Styling", title: "Elegant Waves", subtitle: "Special Occasion Hairstyling", image: "assets/portfolio/hair1.png", gallery: ["assets/hair.png", "assets/makeup.png"]},
+                {id: 2, category: "skin", subcategory: "Facial", title: "Deep Hydration", subtitle: "Luxury Facial Results", image: "assets/portfolio/skin1.png", gallery: ["assets/skin.png", "assets/hair.png"]},
+                {id: 3, category: "makeup", subcategory: "Bridal", title: "Royal Bridal", subtitle: "Signature Wedding Look", image: "assets/makeup.png", gallery: ["assets/portfolio/hair1.png", "assets/portfolio/skin1.png"]}
+            ]
+        };
+
+        let currentTab = 'jewellery';
+        let adminFilter = 'all';
+        let data = {
+            jewellery: JSON.parse(localStorage.getItem(KEYS.jewellery)) || DEFAULTS.jewellery,
+            portfolio: JSON.parse(localStorage.getItem(KEYS.portfolio)) || DEFAULTS.portfolio
+        };
+
+        function switchTab(tab, btn) {
+            currentTab = tab;
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            const listSection = document.getElementById('listContainer');
+            const securitySection = document.getElementById('securitySection');
+            const itemForm = document.getElementById('itemForm');
+
+            if (tab === 'security') {
+                listSection.style.display = 'none';
+                itemForm.style.display = 'none';
+                securitySection.style.display = 'block';
+            } else {
+                listSection.style.display = 'block';
+                securitySection.style.display = 'none';
+                document.getElementById('tableTitle').innerText = tab.charAt(0).toUpperCase() + tab.slice(1) + ' Listings';
+                document.getElementById('catHeader').style.display = tab === 'portfolio' ? 'table-cell' : 'none';
+                document.getElementById('subHeader').style.display = tab === 'portfolio' ? 'table-cell' : 'none';
+                document.getElementById('galleryHeader').style.display = tab === 'portfolio' ? 'table-cell' : 'none';
+                renderTable();
+            }
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('adminTableBody');
+            tbody.innerHTML = '';
+            let items = data[currentTab];
+            
+            items.forEach(item => {
+                const name = currentTab === 'jewellery' ? item.name : item.title;
+                const meta = currentTab === 'jewellery' ? '₹ ' + item.price : item.subtitle;
+                const statusColor = item.status === 'inactive' ? '#FF0000' : '#00AA00';
+                const galleryImgs = (item.gallery || []).map(img => `<img src="${img}" style="width:20px; height:20px; object-fit:cover; margin-right:2px; border:1px solid #EEE;" onerror="this.style.display='none'">`).join('');
+                
+                tbody.innerHTML += `
+                    <tr>
+                        <td><img src="${item.image}" class="img-preview" onerror="this.src='assets/hair.png'"></td>
+                        <td><strong>${name}</strong></td>
+                        <td>${meta}</td>
+                        ${currentTab === 'portfolio' ? `<td><span style="text-transform:uppercase; font-size:0.7rem; font-weight:900;">${item.category}</span></td>` : ''}
+                        ${currentTab === 'portfolio' ? `<td><span style="font-size:0.7rem; color:var(--text-muted);">${item.subcategory || '-'}</span></td>` : ''}
+                        ${currentTab === 'portfolio' ? `<td><div style="display:flex; flex-wrap:wrap; max-width:80px;">${galleryImgs}</div><div style="font-size:0.6rem; margin-top:4px;">${(item.gallery || []).length} items</div></td>` : ''}
+                        <td><span style="color: ${statusColor}; font-weight:900; text-transform:uppercase; font-size:0.6rem; letter-spacing:1px; border: 1px solid ${statusColor}; padding: 2px 6px; border-radius:3px;">${item.status || 'active'}</span></td>
+                        <td class="action-btns">
+                            <button class="btn-action" onclick="editItem('${item.id}')">Edit</button>
+                            <button class="btn-action delete" onclick="deleteItem('${item.id}')">Delete</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        let uploadedImageData = null;
+        let uploadedGalleryData = [];
+
+        function previewUpload(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    uploadedImageData = e.target.result;
+                    document.getElementById('uploadPreview').style.display = 'block';
+                    document.getElementById('prevImg').src = uploadedImageData;
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function previewGalleryUpload(input) {
+            if (input.files) {
+                Array.from(input.files).forEach(file => {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        uploadedGalleryData.push(e.target.result);
+                        renderGalleryPreview();
+                    };
+                    reader.readAsDataURL(file);
+                });
+            }
+        }
+
+        function renderGalleryPreview() {
+            const container = document.getElementById('galleryPreview');
+            container.innerHTML = '';
+            uploadedGalleryData.forEach((src, index) => {
+                const wrap = document.createElement('div');
+                wrap.style.position = 'relative';
+                wrap.style.display = 'inline-block';
+                wrap.innerHTML = `
+                    <img src="${src}" style="width: 80px; height: 80px; object-fit: cover; border: 1px solid #EEE;">
+                    <span onclick="removeGalleryImg(${index})" style="position:absolute; top:-5px; right:-5px; background:#000; color:#fff; border-radius:50%; width:20px; height:20px; text-align:center; font-size:12px; cursor:pointer; line-height:20px;">&times;</span>
+                `;
+                container.appendChild(wrap);
+            });
+        }
+
+        function removeGalleryImg(index) {
+            uploadedGalleryData.splice(index, 1);
+            renderGalleryPreview();
+        }
+
+        function showAddForm() {
+            document.getElementById('itemForm').style.display = 'block';
+            document.getElementById('itemType').value = currentTab;
+            document.getElementById('itemId').value = '';
+            document.getElementById('itemName').value = '';
+            document.getElementById('itemMeta').value = '';
+            document.getElementById('imageUpload').value = '';
+            document.getElementById('galleryUpload').value = '';
+            uploadedImageData = null;
+            uploadedGalleryData = [];
+            document.getElementById('uploadPreview').style.display = 'none';
+            document.getElementById('galleryPreview').innerHTML = '';
+            
+            document.getElementById('label2').innerText = currentTab === 'jewellery' ? 'Price (₹)' : 'Subtitle';
+            document.getElementById('field3').style.display = currentTab === 'portfolio' ? 'block' : 'none';
+            document.getElementById('field4').style.display = currentTab === 'portfolio' ? 'block' : 'none';
+            document.getElementById('field5').style.display = currentTab === 'portfolio' ? 'block' : 'none';
+            document.getElementById('itemSubcategory').value = '';
+            
+            window.scrollTo({ top: 400, behavior: 'smooth' });
+        }
+
+        function hideAddForm() {
+            document.getElementById('itemForm').style.display = 'none';
+        }
+
+        function saveItem(e) {
+            e.preventDefault();
+            const id = document.getElementById('itemId').value;
+            const name = document.getElementById('itemName').value;
+            const meta = document.getElementById('itemMeta').value;
+            const category = document.getElementById('itemCategory').value;
+            const subcategory = document.getElementById('itemSubcategory').value;
+            const status = document.getElementById('itemStatus').value;
+
+            // Use uploaded data if present
+            let image = uploadedImageData;
+
+            if (id) {
+                const existing = data[currentTab].find(i => i.id == id);
+                if (!image) image = existing.image; // Keep old image if no new upload
+            }
+
+            if (!image) {
+                alert('Please upload a cover image');
+                return;
+            }
+
+            let itemObj = { id: id ? parseInt(id) : Date.now(), image, status };
+            if (currentTab === 'jewellery') {
+                itemObj.name = name;
+                itemObj.price = meta;
+            } else {
+                itemObj.title = name;
+                itemObj.subtitle = meta;
+                itemObj.category = category;
+                itemObj.subcategory = subcategory;
+                itemObj.gallery = [...uploadedGalleryData];
+            }
+
+            if (id) {
+                const idx = data[currentTab].findIndex(i => i.id == id);
+                data[currentTab][idx] = itemObj;
+            } else {
+                data[currentTab].push(itemObj);
+            }
+
+            try {
+                localStorage.setItem(KEYS[currentTab], JSON.stringify(data[currentTab]));
+                renderTable();
+                hideAddForm();
+            } catch (err) {
+                alert('Storage full! Please use smaller images or link direct paths.');
+                console.error(err);
+            }
+        }
+
+        function editItem(id) {
+            const item = data[currentTab].find(i => i.id == id);
+            showAddForm();
+            document.getElementById('itemId').value = item.id;
+            document.getElementById('itemName').value = currentTab === 'jewellery' ? item.name : item.title;
+            document.getElementById('itemMeta').value = currentTab === 'jewellery' ? item.price : item.subtitle;
+            document.getElementById('itemStatus').value = item.status || 'active';
+            
+            if (item.image.startsWith('data:')) {
+                uploadedImageData = item.image;
+                document.getElementById('uploadPreview').style.display = 'block';
+                document.getElementById('prevImg').src = item.image;
+            }
+
+            if (currentTab === 'portfolio') {
+                document.getElementById('itemCategory').value = item.category;
+                document.getElementById('itemSubcategory').value = item.subcategory || '';
+                uploadedGalleryData = item.gallery ? [...item.gallery] : [];
+                renderGalleryPreview();
+            }
+            document.getElementById('formTitle').innerText = 'Refine Listing';
+        }
+
+        function deleteItem(id) {
+            if (confirm('Permanently remove this listing?')) {
+                data[currentTab] = data[currentTab].filter(i => i.id != id);
+                localStorage.setItem(KEYS[currentTab], JSON.stringify(data[currentTab]));
+                renderTable();
+            }
+        }
+
+        function handlePassUpdate(e) {
+            e.preventDefault();
+            const curr = document.getElementById('currPass').value;
+            const newP = document.getElementById('newPass').value;
+            const conf = document.getElementById('confirmPass').value;
+
+            if (newP !== conf) {
+                alert('New passwords do not match');
+                return;
+            }
+
+            if (updateAdminPassword(curr, newP)) {
+                e.target.reset();
+            }
+        }
+
+        renderTable();
+    </script>
+</body>
+</html>
