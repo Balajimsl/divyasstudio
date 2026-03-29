@@ -149,6 +149,24 @@
             </div>
         </section>
 
+        <!-- Promo Section -->
+        <section id="promo" class="promo-section">
+            <div class="container">
+                <div class="section-title">
+                    <label style="color: var(--accent);">Exclusive Menus</label>
+                    <h2>Signature <span>Packages</span></h2>
+                </div>
+                <div class="promo-grid">
+                    <div class="promo-card reveal fade-in-up">
+                        <img src="assets/promo_1.jpg" alt="Signature Services" onclick="openImageModal(this.src)" style="cursor: pointer;">
+                    </div>
+                    <div class="promo-card reveal fade-in-up" style="transition-delay: 0.2s;">
+                        <img src="assets/promo_2.jpg" alt="Service Menu" onclick="openImageModal(this.src)" style="cursor: pointer;">
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- Contact Section -->
         <section id="contact" class="contact">
             <div class="container">
@@ -169,6 +187,23 @@
         <p>&copy; 2026 Divya's Studio. All rights reserved.</p>
     </footer>
 
+    <!-- Image Lightbox Popup -->
+    <div id="imagePopup" class="img-popup" onclick="if(event.target === this) closeImageModal()">
+        <span class="close-popup" onclick="closeImageModal()">&times;</span>
+        <img class="popup-content" id="popupImage">
+    </div>
+
+    <script>
+        function openImageModal(src) {
+            document.getElementById('popupImage').src = src;
+            document.getElementById('imagePopup').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+        function closeImageModal() {
+            document.getElementById('imagePopup').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+    </script>
     <script src="script.js"></script>
 </body>
 </html>
