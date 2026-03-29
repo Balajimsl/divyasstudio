@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exclusive Offers | Divya's Studio</title>
+    <meta name="description" content="Secure your spot for a premium transformation at Divya's Studio.">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Quintessential&family=Montserrat:wght@300;400;600;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Lander-specific styles */
+        .lander-header {
+            position: absolute; /* No fixed sticky so it scrolls away naturally */
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            padding: 2rem 0;
+            text-align: center;
+        }
+        
+        .lander-logo .brand-text {
+            color: var(--white);
+            font-size: 2.2rem;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+        
+        .lander-logo .brand-text span {
+            color: #CCC;
+        }
+
+        .lander-hero {
+            height: 100vh;
+            min-height: 800px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: url('assets/makeup.png') center/cover no-repeat;
+            position: relative;
+            color: var(--white);
+            text-align: center;
+        }
+
+        .lander-overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.6), rgba(0,0,0,0.9));
+            z-index: 1;
+        }
+
+        .lander-content {
+            z-index: 2;
+            max-width: 900px;
+            padding: 0 2rem;
+            margin-top: 5rem;
+        }
+
+        .lander-badge {
+            display: inline-block;
+            padding: 0.5rem 1.5rem;
+            border: 1px solid var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-size: 0.7rem;
+            font-weight: 900;
+            margin-bottom: 2rem;
+            border-radius: 50px;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(5px);
+        }
+
+        .lander-content h1 {
+            font-size: 5rem;
+            line-height: 1;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        
+        .lander-content h1 span {
+            display: block;
+            color: transparent;
+            -webkit-text-stroke: 1px var(--white);
+        }
+
+        .lander-content p {
+            font-size: 1.2rem;
+            color: #DDD;
+            margin-bottom: 3rem;
+            font-weight: 300;
+        }
+
+        .lander-form-wrapper {
+            background: var(--white);
+            padding: 3rem;
+            border-radius: 5px;
+            max-width: 500px;
+            margin: 0 auto;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.5);
+            color: var(--primary);
+            text-align: left;
+        }
+
+        .lander-form-wrapper h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            letter-spacing: 0;
+            text-transform: uppercase;
+        }
+
+        .lander-form-wrapper p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+            font-weight: 400;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            font-weight: 900;
+            letter-spacing: 1px;
+            color: #999;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 1rem;
+            border: 1px solid #EEE;
+            font-family: 'Montserrat', sans-serif;
+            background: #FAFAFA;
+            transition: var(--transition);
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: var(--white);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 1.2rem;
+            background: var(--primary);
+            color: var(--white);
+            border: none;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-submit:hover {
+            background: var(--accent);
+            letter-spacing: 4px;
+        }
+        
+        .benefits-section {
+            padding: 6rem 0;
+            background: var(--white);
+            text-align: center;
+        }
+        
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-top: 4rem;
+        }
+        
+        .benefit-item .icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .benefit-item h4 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+        }
+        
+        .benefit-item p {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        @media (max-width: 1024px) {
+            .benefits-grid { grid-template-columns: 1fr; gap: 3rem; }
+        }
+        @media (max-width: 576px) {
+            .lander-content h1 { font-size: 3.5rem; }
+            .lander-form-wrapper { padding: 2rem 1.5rem; }
+            .lander-hero { min-height: auto; padding: 10rem 0 4rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Minimal Header (No distraction links) -->
+    <header class="lander-header">
+        <div class="logo lander-logo">
+            <a href="index.html" style="text-decoration: none;">
+                <div class="brand-text">DIVYA'S <span>STUDIO</span></div>
+            </a>
+        </div>
+    </header>
+
+    <!-- Hero & Lead Capture -->
+    <section class="lander-hero">
+        <div class="lander-overlay"></div>
+        <div class="lander-content">
+            <span class="lander-badge">Limited Time Offer</span>
+            <h1>Bridal & Editorial <span>Masterclass</span></h1>
+            <p>Experience a flawless transformation. Reserve your date now for exclusive packages and priority booking privileges.</p>
+            
+            <div class="lander-form-wrapper reveal fade-in-up">
+                <h3>Check Availability</h3>
+                <p>Fill out the form below and our team will contact you within 24 hours to secure your date.</p>
+                <form id="leadForm" onsubmit="submitLead(event)">
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" id="leadName" required placeholder="Jane Doe">
+                    </div>
+                    <div class="form-group">
+                        <label>Phone / WhatsApp</label>
+                        <input type="tel" id="leadPhone" required placeholder="+91 98765 43210">
+                    </div>
+                    <div class="form-group">
+                        <label>Event Type</label>
+                        <select id="leadEvent">
+                            <option value="bridal">Bridal Makeup</option>
+                            <option value="party">Party / Reception Makeup</option>
+                            <option value="editorial">Editorial Shoot</option>
+                            <option value="other">Other Service</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn-submit" id="submitBtn">Reserve My Spot</button>
+                    <p id="successMsg" style="color: green; text-align: center; font-weight: 900; display: none; margin-top: 1rem; margin-bottom: 0;">Request Received! We'll be in touch.</p>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Social Proof / Benefits -->
+    <section class="benefits-section">
+        <div class="container">
+            <div class="section-title">
+                <label class="subtitle" style="color: var(--accent);">Why Choose Us</label>
+                <h2>Premium <span>Service</span></h2>
+            </div>
+            <div class="benefits-grid">
+                <div class="benefit-item reveal fade-in-up">
+                    <div class="icon">✨</div>
+                    <h4>HD & Airbrush Mastery</h4>
+                    <p>Flawless, long-lasting finishes that photograph perfectly under any lighting.</p>
+                </div>
+                <div class="benefit-item reveal fade-in-up" style="transition-delay: 0.1s">
+                    <div class="icon">👑</div>
+                    <h4>Luxury Products</h4>
+                    <p>We use only the highest-tier international brands tailored to local skin types.</p>
+                </div>
+                <div class="benefit-item reveal fade-in-up" style="transition-delay: 0.2s">
+                    <div class="icon">⏱️</div>
+                    <h4>Punctual & Stress-Free</h4>
+                    <p>Your timeline is our priority. We guarantee a relaxed environment on your big day.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer" style="background: var(--bg-dark); color: #666; border-top: none; padding: 2rem;">
+        <p>&copy; 2026 Divya's Studio. <a href="index.html" style="color: #999; text-decoration: none; margin-left: 10px;">Return to Main Site</a></p>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        // Simple Lead Submission Mock
+        function submitLead(e) {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            const msg = document.getElementById('successMsg');
+            
+            btn.innerHTML = 'Sending...';
+            btn.style.opacity = '0.5';
+            btn.disabled = true;
+
+            // Simulate API Call
+            setTimeout(() => {
+                btn.style.display = 'none';
+                msg.style.display = 'block';
+                e.target.reset();
+            }, 1000);
+        }
+
+        // Initialize animations early for the lander since script.js might load slow
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.revealObserver) {
+                document.querySelectorAll('.reveal').forEach(el => window.revealObserver.observe(el));
+            } else {
+                document.querySelectorAll('.reveal').forEach(el => el.classList.add('active'));
+            }
+        });
+    </script>
+</body>
+</html>
