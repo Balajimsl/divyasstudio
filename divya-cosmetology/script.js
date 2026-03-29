@@ -140,3 +140,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 100);
     }
 });
+
+// Mobile Menu Toggle
+function toggleMobileMenu() {
+    const nav = document.querySelector('.nav-links');
+    const hamburger = document.querySelector('.hamburger');
+    if(nav && hamburger) {
+        nav.classList.toggle('nav-active');
+        hamburger.classList.toggle('toggle');
+    }
+}

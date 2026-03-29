@@ -147,6 +147,22 @@ h1, h2, h3, .logo {
     gap: 1.5rem;
 }
 
+.hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+    z-index: 2000;
+}
+
+.hamburger span {
+    width: 25px;
+    height: 3px;
+    background: var(--primary);
+    border-radius: 3px;
+    transition: var(--transition);
+}
+
 /* Hero Section */
 .hero {
     height: 100vh;
@@ -478,8 +494,33 @@ h1, h2, h3, .logo {
     .hero-content h1 { font-size: 4rem; }
     .services-grid { grid-template-columns: 1fr; }
     .features-grid { grid-template-columns: 1fr 1fr; gap: 3rem; }
-    .nav-links { display: none; } /* Kept simple without hamburger for now */
     .contact-box { padding: 4rem 2rem; }
+
+    /* Mobile Navigation Drawer */
+    .hamburger { display: flex; }
+    .nav-links {
+        position: fixed;
+        right: -100%;
+        top: 0;
+        height: 100vh;
+        width: 70%;
+        max-width: 300px;
+        background: var(--white);
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 2rem;
+        box-shadow: -10px 0 30px rgba(0,0,0,0.1);
+        transition: right 0.4s ease;
+        z-index: 1500;
+        display: flex;
+    }
+    .nav-links a { font-size: 1.2rem; }
+    .nav-links.nav-active { right: 0; }
+    .hamburger.toggle span:nth-child(1) { transform: rotate(45deg) translate(5px, 6px); }
+    .hamburger.toggle span:nth-child(2) { opacity: 0; }
+    .hamburger.toggle span:nth-child(3) { transform: rotate(-45deg) translate(5px, -6px); }
+    .booking-btn { display: none; }
 }
 
 /* Mobile (max-width: 576px) */
