@@ -194,32 +194,26 @@
         <p>&copy; 2026 Divya's Studio. All rights reserved.</p>
     </footer>
 
+    <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore-compat.js"></script>
     <script src="script.js"></script>
     <script>
-        const KEYS = {
-            jewellery: 'divya_jewellery_data',
-            portfolio: 'divya_portfolio_data'
-        };
-
         const DEFAULTS = {
             jewellery: [
-                {id: 1, name: "Temple Antique Gold", price: "2,500", image: "assets/jewellery/temple1.png"},
-                {id: 2, name: "Royal Bridal Gold", price: "3,200", image: "assets/makeup.png"},
-                {id: 3, name: "Glistening Diamond", price: "5,000", image: "assets/hair.png"}
+                {name: "Temple Antique Gold", price: "2,500", image: "assets/jewellery/temple1.png"},
+                {name: "Royal Bridal Gold", price: "3,200", image: "assets/makeup.png"},
+                {name: "Glistening Diamond", price: "5,000", image: "assets/hair.png"}
             ],
             portfolio: [
-                {id: 1, category: "hair", subcategory: "Styling", title: "Elegant Waves", subtitle: "Special Occasion Hairstyling", image: "assets/portfolio/hair1.png", gallery: ["assets/hair.png", "assets/makeup.png"]},
-                {id: 2, category: "skin", subcategory: "Facial", title: "Deep Hydration", subtitle: "Luxury Facial Results", image: "assets/portfolio/skin1.png", gallery: ["assets/skin.png", "assets/hair.png"]},
-                {id: 3, category: "makeup", subcategory: "Bridal", title: "Royal Bridal", subtitle: "Signature Wedding Look", image: "assets/makeup.png", gallery: ["assets/portfolio/hair1.png", "assets/portfolio/skin1.png"]}
+                {category: "hair", subcategory: "Styling", title: "Elegant Waves", subtitle: "Special Occasion Hairstyling", image: "assets/portfolio/hair1.png", gallery: ["assets/hair.png", "assets/makeup.png"]},
+                {category: "skin", subcategory: "Facial", title: "Deep Hydration", subtitle: "Luxury Facial Results", image: "assets/portfolio/skin1.png", gallery: ["assets/skin.png", "assets/hair.png"]},
+                {category: "makeup", subcategory: "Bridal", title: "Royal Bridal", subtitle: "Signature Wedding Look", image: "assets/makeup.png", gallery: ["assets/portfolio/hair1.png", "assets/portfolio/skin1.png"]}
             ]
         };
 
         let currentTab = 'jewellery';
         let adminFilter = 'all';
-        let data = {
-            jewellery: JSON.parse(localStorage.getItem(KEYS.jewellery)) || DEFAULTS.jewellery,
-            portfolio: JSON.parse(localStorage.getItem(KEYS.portfolio)) || DEFAULTS.portfolio
-        };
+        let data = { jewellery: [], portfolio: [] };
 
         function switchTab(tab, btn) {
             currentTab = tab;
@@ -348,7 +342,7 @@
             document.getElementById('itemForm').style.display = 'none';
         }
 
-        function saveItem(e) {
+        async function saveItem(e) {
             e.preventDefault();
             const id = document.getElementById('itemId').value;
             const name = document.getElementById('itemName').value;
@@ -357,20 +351,23 @@
             const subcategory = document.getElementById('itemSubcategory').value;
             const status = document.getElementById('itemStatus').value;
 
-            // Use uploaded data if present
             let image = uploadedImageData;
 
             if (id) {
-                const existing = data[currentTab].find(i => i.id == id);
-                if (!image) image = existing.image; // Keep old image if no new upload
+                const existing = data[currentTab].find(i => i.id === id);
+                if (!image && existing) image = existing.image; 
             }
 
-            if (!image) {
-                alert('Please upload a cover image');
-                return;
-            }
+            if (!image) { alert('Please upload a cover image'); return; }
 
-            let itemObj = { id: id ? parseInt(id) : Date.now(), image, status };
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const ogText = submitBtn.innerText;
+            submitBtn.innerText = 'Saving...';
+            submitBtn.disabled = true;
+
+            let itemObj = { status, createdAt: Date.now() };
+            if(image) itemObj.image = image;
+            
             if (currentTab === 'jewellery') {
                 itemObj.name = name;
                 itemObj.price = meta;
@@ -382,32 +379,33 @@
                 itemObj.gallery = [...uploadedGalleryData];
             }
 
-            if (id) {
-                const idx = data[currentTab].findIndex(i => i.id == id);
-                data[currentTab][idx] = itemObj;
-            } else {
-                data[currentTab].push(itemObj);
-            }
-
             try {
-                localStorage.setItem(KEYS[currentTab], JSON.stringify(data[currentTab]));
-                renderTable();
+                if (id) {
+                    await db.collection(currentTab).doc(id).update(itemObj);
+                } else {
+                    await db.collection(currentTab).add(itemObj);
+                }
                 hideAddForm();
+                await loadAdminData();
             } catch (err) {
-                alert('Storage full! Please use smaller images or link direct paths.');
+                alert('Firebase Save Error: ' + err.message + ' (Images may be too large)');
                 console.error(err);
+            } finally {
+                submitBtn.innerText = ogText;
+                submitBtn.disabled = false;
             }
         }
 
         function editItem(id) {
-            const item = data[currentTab].find(i => i.id == id);
+            const item = data[currentTab].find(i => i.id === id);
+            if(!item) return;
             showAddForm();
             document.getElementById('itemId').value = item.id;
             document.getElementById('itemName').value = currentTab === 'jewellery' ? item.name : item.title;
             document.getElementById('itemMeta').value = currentTab === 'jewellery' ? item.price : item.subtitle;
             document.getElementById('itemStatus').value = item.status || 'active';
             
-            if (item.image.startsWith('data:')) {
+            if (item.image && item.image.startsWith('data:')) {
                 uploadedImageData = item.image;
                 document.getElementById('uploadPreview').style.display = 'block';
                 document.getElementById('prevImg').src = item.image;
@@ -422,11 +420,14 @@
             document.getElementById('formTitle').innerText = 'Refine Listing';
         }
 
-        function deleteItem(id) {
-            if (confirm('Permanently remove this listing?')) {
-                data[currentTab] = data[currentTab].filter(i => i.id != id);
-                localStorage.setItem(KEYS[currentTab], JSON.stringify(data[currentTab]));
-                renderTable();
+        async function deleteItem(id) {
+            if (confirm('Permanently remove this listing from Firebase?')) {
+                try {
+                    await db.collection(currentTab).doc(id).delete();
+                    await loadAdminData();
+                } catch(err) {
+                    alert('Delete failed: ' + err.message);
+                }
             }
         }
 
@@ -436,17 +437,34 @@
             const newP = document.getElementById('newPass').value;
             const conf = document.getElementById('confirmPass').value;
 
-            if (newP !== conf) {
-                alert('New passwords do not match');
-                return;
-            }
-
-            if (updateAdminPassword(curr, newP)) {
-                e.target.reset();
-            }
+            if (newP !== conf) { alert('New passwords do not match'); return; }
+            if (updateAdminPassword(curr, newP)) { e.target.reset(); }
         }
 
-        renderTable();
+        async function loadAdminData() {
+            if(!db) return;
+            const tbody = document.getElementById('adminTableBody');
+            tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding: 3rem;">Syncing with Firebase...</td></tr>';
+            
+            let pData = await getFirebaseData('portfolio');
+            let jData = await getFirebaseData('jewellery');
+            
+            // Initial seed if empty
+            if(pData.length === 0 && db) {
+                for(let item of DEFAULTS.portfolio) await db.collection('portfolio').add({...item, createdAt: Date.now()});
+                pData = await getFirebaseData('portfolio');
+            }
+            if(jData.length === 0 && db) {
+                for(let item of DEFAULTS.jewellery) await db.collection('jewellery').add({...item, createdAt: Date.now()});
+                jData = await getFirebaseData('jewellery');
+            }
+            
+            data.portfolio = pData;
+            data.jewellery = jData;
+            renderTable();
+        }
+
+        setTimeout(loadAdminData, 300);
     </script>
 </body>
 </html>

@@ -281,24 +281,25 @@
         </div>
     </div>
 
+    <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore-compat.js"></script>
     <script src="script.js"></script>
     <script>
-        const PORTFOLIO_KEY = 'divya_portfolio_data';
         const DEFAULT_PORTFOLIO = [
-            {id: 1, category: "hair", subcategory: "Styling", title: "Elegant Waves", subtitle: "Special Occasion Hairstyling", image: "assets/portfolio/hair1.png", gallery: ["assets/hair.png", "assets/makeup.png"]},
-            {id: 2, category: "skin", subcategory: "Facial", title: "Deep Hydration", subtitle: "Luxury Facial Results", image: "assets/portfolio/skin1.png", gallery: ["assets/skin.png", "assets/hair.png"]},
-            {id: 3, category: "makeup", subcategory: "Bridal", title: "Royal Bridal", subtitle: "Signature Wedding Look", image: "assets/makeup.png", gallery: ["assets/portfolio/hair1.png", "assets/portfolio/skin1.png"]},
-            {id: 4, category: "hair", subcategory: "Cut & Finish", title: "Precision Cut", subtitle: "Modern Style & Finish", image: "assets/hair.png", gallery: []}
+            {category: "hair", subcategory: "Styling", title: "Elegant Waves", subtitle: "Special Occasion Hairstyling", image: "assets/portfolio/hair1.png", gallery: ["assets/hair.png", "assets/makeup.png"]},
+            {category: "skin", subcategory: "Facial", title: "Deep Hydration", subtitle: "Luxury Facial Results", image: "assets/portfolio/skin1.png", gallery: ["assets/skin.png", "assets/hair.png"]},
+            {category: "makeup", subcategory: "Bridal", title: "Royal Bridal", subtitle: "Signature Wedding Look", image: "assets/makeup.png", gallery: ["assets/portfolio/hair1.png", "assets/portfolio/skin1.png"]},
+            {category: "hair", subcategory: "Cut & Finish", title: "Precision Cut", subtitle: "Modern Style & Finish", image: "assets/hair.png", gallery: []}
         ];
 
         let activeFilter = 'hair';
+        let latestData = [];
 
         function toggleCard(id) {
-            const data = JSON.parse(localStorage.getItem(PORTFOLIO_KEY)) || DEFAULT_PORTFOLIO;
+            const data = latestData.length ? latestData : DEFAULT_PORTFOLIO;
             const item = data.find(i => i.id == id);
             if (!item) return;
 
-            // Populate Modal
             document.getElementById('modalCategory').innerText = item.subcategory || item.category;
             document.getElementById('modalTitle').innerText = item.title;
             document.getElementById('modalSubtitle').innerText = item.subtitle;
@@ -306,7 +307,6 @@
             const grid = document.getElementById('modalGalleryGrid');
             grid.innerHTML = '';
             
-            // Add only gallery images (exclude cover image)
             const allImages = item.gallery || [];
             allImages.forEach(img => {
                 const imgEl = document.createElement('img');
@@ -315,11 +315,10 @@
                 grid.appendChild(imgEl);
             });
 
-            // Show Modal
             const modal = document.getElementById('galleryModal');
             modal.style.display = 'block';
             setTimeout(() => modal.classList.add('active'), 10);
-            document.body.style.overflow = 'hidden'; // Prevent scroll
+            document.body.style.overflow = 'hidden';
         }
 
         function closeModal() {
@@ -331,20 +330,20 @@
             }, 400);
         }
 
-        function renderPortfolio() {
-            let data = JSON.parse(localStorage.getItem(PORTFOLIO_KEY)) || DEFAULT_PORTFOLIO;
+        async function renderPortfolio() {
+            let data = await getFirebaseData('portfolio');
             
-            // Migration: Ensure gallery array exists AND has test data if empty
-            let updated = false;
-            data = data.map(item => {
-                if (!item.gallery || item.gallery.length === 0) {
-                    const defaultItem = DEFAULT_PORTFOLIO.find(d => d.id === item.id || d.category === item.category);
-                    item.gallery = defaultItem ? defaultItem.gallery : ["assets/hair.png", "assets/makeup.png"];
-                    updated = true;
+            if (!data || data.length === 0) {
+                if(db) {
+                    for(let item of DEFAULT_PORTFOLIO) {
+                       await db.collection('portfolio').add({...item, createdAt: Date.now()});
+                    }
+                    data = await getFirebaseData('portfolio');
+                } else {
+                    data = DEFAULT_PORTFOLIO;
                 }
-                return item;
-            });
-            if (updated) localStorage.setItem(PORTFOLIO_KEY, JSON.stringify(data));
+            }
+            latestData = data;
 
             const container = document.getElementById('portfolioDisplay');
             if (!container) return;
@@ -358,7 +357,6 @@
 
             filteredData.forEach((item, index) => {
                 const revealDelay = (index % 4) * 0.1;
-                
                 const card = document.createElement('div');
                 card.className = 'portfolio-card reveal fade-in-up';
                 card.id = `card-${item.id}`;
@@ -387,7 +385,6 @@
             }
         }
 
-        // Initialize
         document.addEventListener('DOMContentLoaded', () => {
             document.querySelectorAll('.filter-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
@@ -397,11 +394,8 @@
                     renderPortfolio();
                 });
             });
-            renderPortfolio();
+            setTimeout(renderPortfolio, 300); // Give Firebase time to init
         });
-
-        // Fail-safe init
-        setTimeout(renderPortfolio, 500);
     </script>
 </body>
 </html>

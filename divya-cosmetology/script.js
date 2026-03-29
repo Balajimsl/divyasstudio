@@ -1,3 +1,38 @@
+// Firebase Configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyCvTCPFXIQInqsjQxnBF42gDNevlXHDGsw",
+  authDomain: "divyasstudio-8c764.firebaseapp.com",
+  projectId: "divyasstudio-8c764",
+  storageBucket: "divyasstudio-8c764.firebasestorage.app",
+  messagingSenderId: "454284508676",
+  appId: "1:454284508676:web:df5bc0b7862cce38e23f51",
+  measurementId: "G-T26YL9T8T9"
+};
+
+let db = null;
+if (typeof firebase !== 'undefined') {
+    firebase.initializeApp(firebaseConfig);
+    db = firebase.firestore();
+}
+
+// Global Firebase Data Fetcher
+async function getFirebaseData(collectionName) {
+    if (!db) return [];
+    try {
+        const snapshot = await db.collection(collectionName).get();
+        let data = [];
+        snapshot.forEach(doc => {
+            let item = doc.data();
+            item.id = doc.id;
+            data.push(item);
+        });
+        return data.sort((a,b) => (a.createdAt || 0) - (b.createdAt || 0));
+    } catch (e) {
+        console.error("Firebase get error", e);
+        return [];
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     // Reveal animations on scroll
     const revealElements = document.querySelectorAll('.reveal');
