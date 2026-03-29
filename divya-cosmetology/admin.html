@@ -454,10 +454,7 @@
                 for(let item of DEFAULTS.portfolio) await db.collection('portfolio').add({...item, createdAt: Date.now()});
                 pData = await getFirebaseData('portfolio');
             }
-            if(jData.length === 0 && db) {
-                for(let item of DEFAULTS.jewellery) await db.collection('jewellery').add({...item, createdAt: Date.now()});
-                jData = await getFirebaseData('jewellery');
-            }
+            // Jewellery auto-seed has been disabled by user request.
             
             data.portfolio = pData;
             data.jewellery = jData;

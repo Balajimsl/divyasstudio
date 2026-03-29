@@ -154,15 +154,8 @@
         async function renderJewellery() {
             let data = await getFirebaseData('jewellery');
             
-            if(!data || data.length === 0){
-                 if(db) {
-                     for(let item of DEFAULT_DATA) {
-                         await db.collection('jewellery').add({...item, createdAt: Date.now()});
-                     }
-                     data = await getFirebaseData('jewellery');
-                 } else {
-                     data = DEFAULT_DATA;
-                 }
+            if(!data || data.length === 0) {
+                 data = [];
             }
 
             const container = document.getElementById('jewelleryDisplay');
