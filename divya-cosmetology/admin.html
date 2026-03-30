@@ -215,6 +215,19 @@
         let adminFilter = 'all';
         let data = { jewellery: [], portfolio: [] };
 
+        function toggleSecurityPass(inputId, icon) {
+            const input = document.getElementById(inputId);
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.innerText = '🙈'; // Hide icon
+                icon.style.opacity = '1';
+            } else {
+                input.type = 'password';
+                icon.innerText = '👁️'; // Show icon
+                icon.style.opacity = '0.5';
+            }
+        }
+
         function switchTab(tab, btn) {
             currentTab = tab;
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
