@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Reviews | Divya's Studio</title>
+    <meta name="description" content="Read what our clients say about Divya's Studio. Real reviews from brides, party-goers, and beauty enthusiasts in Chennai.">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Quintessential&family=Montserrat:wght@300;400;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .reviews-header {
+            padding: 15rem 0 8rem;
+            text-align: left;
+            background: var(--bg-dark);
+            color: var(--white);
+        }
+        .reviews-header h1 { 
+            font-size: 8rem; 
+            margin: 0; 
+            letter-spacing: -5px;
+            line-height: 0.85;
+            max-width: 900px;
+        }
+        .reviews-header h1 span {
+            display: block;
+            color: transparent;
+            -webkit-text-stroke: 1px var(--white);
+        }
+        .reviews-header p {
+            margin-top: 2rem;
+            font-size: 1.2rem;
+            color: #999;
+            font-weight: 300;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        /* Stats Banner */
+        .stats-banner {
+            background: #F9F9F9;
+            padding: 4rem 0;
+            border-bottom: 1px solid #EEE;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+            text-align: center;
+        }
+        .stat-item h3 {
+            font-size: 3rem;
+            letter-spacing: -2px;
+            margin-bottom: 0.5rem;
+        }
+        .stat-item p {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        /* Reviews Section */
+        .reviews-section { padding: 8rem 0; }
+        .reviews-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2.5rem;
+        }
+
+        .review-card {
+            background: var(--white);
+            border: 1px solid #EEE;
+            padding: 3rem;
+            transition: var(--transition);
+            position: relative;
+        }
+        .review-card::before {
+            content: '"';
+            position: absolute;
+            top: 1.5rem;
+            right: 2rem;
+            font-size: 5rem;
+            font-family: 'Quintessential', cursive;
+            color: #F0F0F0;
+            line-height: 1;
+        }
+        .review-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-5px);
+            box-shadow: var(--shadow);
+        }
+
+        .review-stars {
+            display: flex;
+            gap: 3px;
+            margin-bottom: 1.5rem;
+        }
+        .review-stars span {
+            color: #000;
+            font-size: 0.9rem;
+        }
+
+        .review-text {
+            font-size: 1rem;
+            line-height: 1.8;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+            font-style: italic;
+            position: relative;
+            z-index: 1;
+        }
+
+        .review-author {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border-top: 1px solid #F5F5F5;
+            padding-top: 1.5rem;
+        }
+        .author-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: var(--bg-dark);
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 0.9rem;
+            letter-spacing: 0;
+            flex-shrink: 0;
+        }
+        .author-info h4 {
+            font-size: 0.9rem;
+            margin-bottom: 0.2rem;
+            letter-spacing: 0;
+        }
+        .author-info p {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        /* Write a Review Section */
+        .write-review {
+            padding: 8rem 0;
+            background: var(--bg-dark);
+        }
+        .write-review .section-title h2 { color: var(--white); }
+        .write-review .section-title h2 span { -webkit-text-stroke: 1px var(--white); }
+        .write-review .section-title label { color: #888; }
+
+        .review-form-card {
+            max-width: 700px;
+            margin: 0 auto;
+            background: var(--white);
+            padding: 4rem;
+        }
+        .review-form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .review-form-group label {
+            display: block;
+            font-weight: 900;
+            text-transform: uppercase;
+            font-size: 0.7rem;
+            color: #999;
+            margin-bottom: 0.5rem;
+            letter-spacing: 1px;
+        }
+        .review-form-group input,
+        .review-form-group select,
+        .review-form-group textarea {
+            width: 100%;
+            padding: 1.2rem;
+            border: 1px solid #EEE;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            background: #FAFAFA;
+        }
+        .review-form-group input:focus,
+        .review-form-group select:focus,
+        .review-form-group textarea:focus {
+            border-color: var(--primary);
+            outline: none;
+            background: var(--white);
+        }
+        .review-form-group textarea {
+            resize: vertical;
+            min-height: 130px;
+        }
+        .review-form-group.full-width {
+            grid-column: span 2;
+        }
+
+        .star-rating-input {
+            display: flex;
+            gap: 5px;
+            margin-top: 0.3rem;
+        }
+        .star-rating-input span {
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: #CCC;
+            transition: var(--transition);
+        }
+        .star-rating-input span.active,
+        .star-rating-input span:hover,
+        .star-rating-input span:hover ~ span {
+            color: #000;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .reviews-grid { grid-template-columns: repeat(2, 1fr); gap: 2rem; }
+            .reviews-header h1 { font-size: 6rem; }
+        }
+        @media (max-width: 968px) {
+            .reviews-header h1 { font-size: 5rem; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 2rem; }
+        }
+        @media (max-width: 576px) {
+            .reviews-grid { grid-template-columns: 1fr; }
+            .reviews-header { padding: 10rem 0 4rem; }
+            .reviews-header h1 { font-size: 3.5rem; line-height: 1; margin-bottom: 1rem; }
+            .stats-grid { grid-template-columns: 1fr 1fr; }
+            .stat-item h3 { font-size: 2.2rem; }
+            .review-form-grid { grid-template-columns: 1fr; }
+            .review-form-group.full-width { grid-column: span 1; }
+            .review-form-card { padding: 2.5rem 1.5rem; }
+            .review-card { padding: 2rem; }
+            .reviews-section, .write-review { padding: 5rem 0; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <nav class="nav-container">
+            <div class="logo">
+                <a href="index.html" style="text-decoration: none;">
+                    <div class="brand-text">DIVYA'S <span>STUDIO</span></div>
+                </a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="portfolio.html">Portfolio</a></li>
+                <li><a href="jewellery.html">Jewellery</a></li>
+                <li><a href="reviews.html" class="active">Reviews</a></li>
+                <li><a href="index.html#contact">Contact</a></li>
+            </ul>
+            <div class="nav-right">
+                <div class="hamburger" onclick="toggleMobileMenu()">
+                    <span></span><span></span><span></span>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <section class="reviews-header">
+        <div class="container">
+            <label class="subtitle" style="color: var(--accent);">Testimonials</label>
+            <h1>Client <span>Reviews</span></h1>
+            <p>Real stories from real people</p>
+        </div>
+    </section>
+
+    <!-- Stats Banner -->
+    <section class="stats-banner">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-item reveal">
+                    <h3>500+</h3>
+                    <p>Happy Clients</p>
+                </div>
+                <div class="stat-item reveal">
+                    <h3>4.9</h3>
+                    <p>Average Rating</p>
+                </div>
+                <div class="stat-item reveal">
+                    <h3>200+</h3>
+                    <p>Bridal Looks</p>
+                </div>
+                <div class="stat-item reveal">
+                    <h3>100%</h3>
+                    <p>Satisfaction</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Reviews Grid -->
+    <main class="reviews-section">
+        <div class="container">
+            <div class="section-title">
+                <label>What They Say</label>
+                <h2>Client Experiences</h2>
+            </div>
+            <div class="reviews-grid" id="reviewsGrid">
+                <!-- Review 1 -->
+                <div class="review-card reveal fade-in-up">
+                    <div class="review-stars">
+                        <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+                    </div>
+                    <p class="review-text">Divya did my bridal makeup and it was absolutely perfect. She understood exactly the look I wanted and executed it flawlessly. My makeup lasted the entire day without any touch-ups!</p>
+                    <div class="review-author">
+                        <div class="author-avatar">PS</div>
+                        <div class="author-info">
+                            <h4>Priya Shankar</h4>
+                            <p>Bridal Makeup</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Review 2 -->
+                <div class="review-card reveal fade-in-up" style="transition-delay: 0.1s;">
+                    <div class="review-stars">
+                        <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+                    </div>
+                    <p class="review-text">I got a keratin treatment done by Divya and my hair has never looked this smooth and healthy. She uses premium products and takes great care. Highly recommend!</p>
+                    <div class="review-author">
+                        <div class="author-avatar">AK</div>
+                        <div class="author-info">
+                            <h4>Anitha Kumar</h4>
+                            <p>Keratin Treatment</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Review 3 -->
+                <div class="review-card reveal fade-in-up" style="transition-delay: 0.2s;">
+                    <div class="review-stars">
+                        <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+                    </div>
+                    <p class="review-text">Booked Divya for my engagement party. She came right on time, worked patiently with me on my look. Everyone kept complimenting my makeup. She's a true artist!</p>
+                    <div class="review-author">
+                        <div class="author-avatar">MR</div>
+                        <div class="author-info">
+                            <h4>Meera Rajan</h4>
+                            <p>Engagement Makeup</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Review 4 -->
+                <div class="review-card reveal fade-in-up" style="transition-delay: 0.3s;">
+                    <div class="review-stars">
+                        <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+                    </div>
+                    <p class="review-text">The best part about Divya is the doorstep service. I didn't have to go anywhere and she brought all professional-grade products. My facial results were amazing!</p>
+                    <div class="review-author">
+                        <div class="author-avatar">SV</div>
+                        <div class="author-info">
+                            <h4>Swetha Venkat</h4>
+                            <p>Facial Treatment</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Review 5 -->
+                <div class="review-card reveal fade-in-up" style="transition-delay: 0.4s;">
+                    <div class="review-stars">
+                        <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+                    </div>
+                    <p class="review-text">I've been going to Divya for hair coloring for over a year. She knows exactly what suits my skin tone and always delivers. Very professional and friendly!</p>
+                    <div class="review-author">
+                        <div class="author-avatar">DL</div>
+                        <div class="author-info">
+                            <h4>Deepika Lakshmi</h4>
+                            <p>Hair Coloring</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Review 6 -->
+                <div class="review-card reveal fade-in-up" style="transition-delay: 0.5s;">
+                    <div class="review-stars">
+                        <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+                    </div>
+                    <p class="review-text">Had my baby shower makeup done by Divya. She made me look like a queen! The nude glam look was exactly what I wanted. Affordable prices for premium quality.</p>
+                    <div class="review-author">
+                        <div class="author-avatar">KN</div>
+                        <div class="author-info">
+                            <h4>Kavitha Narayanan</h4>
+                            <p>Baby Shower Makeup</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Write a Review -->
+    <section class="write-review">
+        <div class="container">
+            <div class="section-title">
+                <label>Share Your Experience</label>
+                <h2>Write a <span>Review</span></h2>
+            </div>
+            <div class="review-form-card">
+                <form id="reviewForm" onsubmit="submitReview(event)">
+                    <div class="review-form-grid">
+                        <div class="review-form-group">
+                            <label>Your Name</label>
+                            <input type="text" id="reviewName" placeholder="e.g. Priya S." required>
+                        </div>
+                        <div class="review-form-group">
+                            <label>Service Availed</label>
+                            <select id="reviewService" required>
+                                <option value="">Select Service</option>
+                                <option value="Bridal Makeup">Bridal Makeup</option>
+                                <option value="Engagement Makeup">Engagement Makeup</option>
+                                <option value="Party Makeup">Party Makeup</option>
+                                <option value="Hair Styling">Hair Styling</option>
+                                <option value="Hair Coloring">Hair Coloring</option>
+                                <option value="Keratin Treatment">Keratin Treatment</option>
+                                <option value="Hair Spa">Hair Spa</option>
+                                <option value="Facial">Facial</option>
+                                <option value="Waxing">Waxing</option>
+                                <option value="Manicure/Pedicure">Manicure / Pedicure</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="review-form-group full-width">
+                            <label>Your Rating</label>
+                            <div class="star-rating-input" id="starInput">
+                                <span onclick="setRating(1)">★</span>
+                                <span onclick="setRating(2)">★</span>
+                                <span onclick="setRating(3)">★</span>
+                                <span onclick="setRating(4)">★</span>
+                                <span onclick="setRating(5)">★</span>
+                            </div>
+                            <input type="hidden" id="reviewRating" value="5">
+                        </div>
+                        <div class="review-form-group full-width">
+                            <label>Your Review</label>
+                            <textarea id="reviewText" placeholder="Share your experience with Divya's Studio..." required></textarea>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn primary" style="width: 100%; text-align: center;">Submit Review</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <p>&copy; 2026 Divya's Studio. All rights reserved.</p>
+    </footer>
+
+    <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore-compat.js"></script>
+    <script src="script.js"></script>
+    <script>
+        let selectedRating = 5;
+
+        function setRating(n) {
+            selectedRating = n;
+            document.getElementById('reviewRating').value = n;
+            const stars = document.querySelectorAll('.star-rating-input span');
+            stars.forEach((star, index) => {
+                star.classList.toggle('active', index < n);
+            });
+        }
+
+        // Initialize stars on load
+        setRating(5);
+
+        async function submitReview(e) {
+            e.preventDefault();
+            const name = document.getElementById('reviewName').value.trim();
+            const service = document.getElementById('reviewService').value;
+            const rating = parseInt(document.getElementById('reviewRating').value);
+            const text = document.getElementById('reviewText').value.trim();
+
+            if (!name || !service || !text) {
+                alert('Please fill in all fields.');
+                return;
+            }
+
+            const initials = name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            submitBtn.innerText = 'Submitting...';
+            submitBtn.disabled = true;
+
+            try {
+                if (db) {
+                    await db.collection('reviews').add({
+                        name,
+                        service,
+                        rating,
+                        text,
+                        initials,
+                        createdAt: Date.now(),
+                        status: 'active'
+                    });
+                }
+                alert('Thank you for your review! 🎉');
+                e.target.reset();
+                setRating(5);
+                loadReviews();
+            } catch (err) {
+                alert('Failed to submit review: ' + err.message);
+                console.error(err);
+            } finally {
+                submitBtn.innerText = 'Submit Review';
+                submitBtn.disabled = false;
+            }
+        }
+
+        async function loadReviews() {
+            if (!db) return;
+            try {
+                const snapshot = await db.collection('reviews')
+                    .orderBy('createdAt', 'desc')
+                    .get();
+                
+                if (snapshot.empty) return; // Keep default reviews if no Firebase data
+
+                const grid = document.getElementById('reviewsGrid');
+                grid.innerHTML = '';
+
+                snapshot.forEach(doc => {
+                    const r = doc.data();
+                    if (r.status === 'inactive') return;
+                    const starsHTML = Array(r.rating || 5).fill('<span>★</span>').join('');
+                    
+                    grid.innerHTML += `
+                        <div class="review-card reveal fade-in-up active">
+                            <div class="review-stars">${starsHTML}</div>
+                            <p class="review-text">${r.text}</p>
+                            <div class="review-author">
+                                <div class="author-avatar">${r.initials || '?'}</div>
+                                <div class="author-info">
+                                    <h4>${r.name}</h4>
+                                    <p>${r.service}</p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                // Re-trigger reveal animations
+                if (window.revealObserver) {
+                    document.querySelectorAll('.reveal').forEach(el => window.revealObserver.observe(el));
+                }
+            } catch (err) {
+                console.log('Reviews load info:', err.message);
+            }
+        }
+
+        // Load reviews from Firebase after a short delay
+        setTimeout(loadReviews, 500);
+    </script>
+</body>
+</html>

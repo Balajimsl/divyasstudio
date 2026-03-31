@@ -83,6 +83,7 @@
             <div class="tab-nav">
                 <button class="tab-btn active" onclick="switchTab('jewellery', this)">Jewellery</button>
                 <button class="tab-btn" onclick="switchTab('portfolio', this)">Portfolio</button>
+                <button class="tab-btn" onclick="switchTab('feedback', this)">Feedback</button>
                 <button class="tab-btn" onclick="switchTab('security', this)">Security</button>
             </div>
 
@@ -145,10 +146,10 @@
             <div id="listContainer" class="card-container">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
                     <h3 id="tableTitle">Jewellery Listings</h3>
-                    <button class="btn primary" onclick="showAddForm()">+ Add Item</button>
+                    <button id="addItemBtn" class="btn primary" onclick="showAddForm()">+ Add Item</button>
                 </div>
                 <table class="item-table">
-                    <thead>
+                    <thead id="dynamicTableHead">
                         <tr>
                             <th>Image</th>
                             <th>Title/Name</th>
@@ -213,7 +214,7 @@
 
         let currentTab = 'jewellery';
         let adminFilter = 'all';
-        let data = { jewellery: [], portfolio: [] };
+        let data = { jewellery: [], portfolio: [], feedback: [] };
 
         function toggleSecurityPass(inputId, icon) {
             const input = document.getElementById(inputId);
@@ -237,17 +238,48 @@
             const securitySection = document.getElementById('securitySection');
             const itemForm = document.getElementById('itemForm');
 
+            // Hide add form whenever switching tabs
+            hideAddForm();
+
             if (tab === 'security') {
                 listSection.style.display = 'none';
-                itemForm.style.display = 'none';
                 securitySection.style.display = 'block';
             } else {
                 listSection.style.display = 'block';
                 securitySection.style.display = 'none';
-                document.getElementById('tableTitle').innerText = tab.charAt(0).toUpperCase() + tab.slice(1) + ' Listings';
-                document.getElementById('catHeader').style.display = tab === 'portfolio' ? 'table-cell' : 'none';
-                document.getElementById('subHeader').style.display = tab === 'portfolio' ? 'table-cell' : 'none';
-                document.getElementById('galleryHeader').style.display = tab === 'portfolio' ? 'table-cell' : 'none';
+                
+                const thead = document.getElementById('dynamicTableHead');
+                const addBtn = document.getElementById('addItemBtn');
+                
+                if (tab === 'feedback') {
+                    document.getElementById('tableTitle').innerText = 'Customer Feedback';
+                    addBtn.style.display = 'none'; // No adding feedback from admin
+                    thead.innerHTML = `
+                        <tr>
+                            <th>Date</th>
+                            <th>Customer Info</th>
+                            <th>Rating</th>
+                            <th>Feedback Details</th>
+                            <th>Actions</th>
+                        </tr>
+                    `;
+                } else {
+                    document.getElementById('tableTitle').innerText = tab.charAt(0).toUpperCase() + tab.slice(1) + ' Listings';
+                    addBtn.style.display = 'block';
+                    thead.innerHTML = `
+                        <tr>
+                            <th>Image</th>
+                            <th>Title/Name</th>
+                            <th>Details</th>
+                            <th id="catHeader" style="display: ${tab === 'portfolio' ? 'table-cell' : 'none'};">Category</th>
+                            <th id="subHeader" style="display: ${tab === 'portfolio' ? 'table-cell' : 'none'};">Subcategory</th>
+                            <th id="galleryHeader" style="display: ${tab === 'portfolio' ? 'table-cell' : 'none'};">Gallery</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    `;
+                }
+                
                 renderTable();
             }
         }
@@ -255,9 +287,34 @@
         function renderTable() {
             const tbody = document.getElementById('adminTableBody');
             tbody.innerHTML = '';
-            let items = data[currentTab];
+            let items = data[currentTab] || [];
             
             items.forEach(item => {
+                if (currentTab === 'feedback') {
+                    const stars = '★'.repeat(item.rating || 5) + '☆'.repeat(5 - (item.rating || 5));
+                    const dateStr = item.date || (item.createdAt ? new Date(item.createdAt).toLocaleDateString() : '-');
+                    
+                    tbody.innerHTML += `
+                        <tr>
+                            <td style="white-space:nowrap;">${dateStr}</td>
+                            <td>
+                                <strong>${item.name || 'Anonymous'}</strong><br>
+                                <span style="font-size:0.75rem; color:var(--text-muted);">${item.email || '-'}</span><br>
+                                <span style="font-size:0.75rem; color:var(--text-muted);">${item.phone || '-'}</span>
+                            </td>
+                            <td><span style="color:#D4AF37; font-size:1.2rem;">${stars}</span></td>
+                            <td>
+                                <div style="font-size:0.8rem; margin-bottom:0.5rem;"><strong>Liked:</strong> ${item.positive || '-'}</div>
+                                <div style="font-size:0.8rem; color:var(--text-muted);"><strong>Improve:</strong> ${item.improve || '-'}</div>
+                            </td>
+                            <td class="action-btns">
+                                <button class="btn-action delete" onclick="deleteItem('${item.id}')">Delete</button>
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+
                 const name = currentTab === 'jewellery' ? item.name : item.title;
                 const meta = currentTab === 'jewellery' ? '₹ ' + item.price : item.subtitle;
                 const statusColor = item.status === 'inactive' ? '#FF0000' : '#00AA00';
@@ -461,6 +518,7 @@
             
             let pData = await getFirebaseData('portfolio');
             let jData = await getFirebaseData('jewellery');
+            let fData = await getFirebaseData('feedback');
             
             // Initial seed if empty
             if(pData.length === 0 && db) {
@@ -471,6 +529,7 @@
             
             data.portfolio = pData;
             data.jewellery = jData;
+            data.feedback = fData;
             renderTable();
         }
 

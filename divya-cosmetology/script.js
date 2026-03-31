@@ -137,6 +137,11 @@ function updateAdminPassword(currentPass, newPass) {
 
 document.addEventListener('DOMContentLoaded', () => {
 
+    // Admin login trigger from URL
+    if (window.location.search.includes('admin=true')) {
+        setTimeout(showLogin, 500);
+    }
+
     // Smooth scroll for internal links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {

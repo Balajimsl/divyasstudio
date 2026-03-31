@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Feedback | Divya's Studio</title>
+    <meta name="description" content="Share your feedback to help us improve our beauty services.">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Quintessential&family=Montserrat:wght@300;400;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .feedback-header {
+            padding: 15rem 0 8rem;
+            text-align: left;
+            background: var(--bg-dark);
+            color: var(--white);
+        }
+        .feedback-header h1 { 
+            font-size: 8rem; 
+            margin: 0; 
+            letter-spacing: -5px;
+            line-height: 0.85;
+            max-width: 900px;
+        }
+        .feedback-header h1 span {
+            display: block;
+            color: transparent;
+            -webkit-text-stroke: 1px var(--white);
+        }
+        .feedback-header p {
+            margin-top: 2rem;
+            font-size: 1.2rem;
+            color: #999;
+            font-weight: 300;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        /* Feedback Section */
+        .feedback-section {
+            padding: 8rem 0;
+            background: #F9F9F9;
+        }
+        .feedback-form-card {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--white, #FFF);
+            padding: 4rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            border: 1px solid #EEE;
+        }
+        .feedback-form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .feedback-form-group label {
+            display: block;
+            font-weight: 900;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            color: #555;
+            margin-bottom: 0.6rem;
+            letter-spacing: 1px;
+        }
+        .feedback-form-group input,
+        .feedback-form-group select,
+        .feedback-form-group textarea {
+            width: 100%;
+            padding: 1.2rem;
+            border: 1px solid #DDD;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            background: #FAFAFA;
+        }
+        .feedback-form-group input:focus,
+        .feedback-form-group select:focus,
+        .feedback-form-group textarea:focus {
+            border-color: var(--primary);
+            outline: none;
+            background: #FFF;
+        }
+        .feedback-form-group textarea {
+            resize: vertical;
+            min-height: 150px;
+        }
+        .feedback-form-group.full-width {
+            grid-column: span 2;
+        }
+
+        .star-rating-input {
+            display: flex;
+            gap: 8px;
+            margin-top: 0.5rem;
+        }
+        .star-rating-input span {
+            cursor: pointer;
+            font-size: 2.5rem;
+            color: #CCC;
+            transition: color 0.2s ease;
+            line-height: 1;
+        }
+        .star-rating-input span.active,
+        .star-rating-input span:hover {
+            color: #000;
+        }
+
+        @media (max-width: 1024px) {
+            .feedback-header h1 { font-size: 6rem; }
+        }
+        @media (max-width: 968px) {
+            .feedback-header h1 { font-size: 5rem; }
+        }
+        @media (max-width: 576px) {
+            .feedback-form-grid { grid-template-columns: 1fr; }
+            .feedback-form-group.full-width { grid-column: span 1; }
+            .feedback-form-card { padding: 2.5rem 1.5rem; }
+            .feedback-header { padding: 10rem 0 4rem; }
+            .feedback-header h1 { font-size: 3.5rem; line-height: 1; margin-bottom: 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <nav class="nav-container">
+            <div class="logo">
+                <a href="index.html" style="text-decoration: none;">
+                    <div class="brand-text">DIVYA'S <span>STUDIO</span></div>
+                </a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="portfolio.html">Portfolio</a></li>
+                <li><a href="jewellery.html">Jewellery</a></li>
+                <li><a href="reviews.html">Reviews</a></li>
+                <li><a href="index.html#contact">Contact</a></li>
+                <li><a href="feedback.html" class="active">Feedback</a></li>
+            </ul>
+            <div class="nav-right">
+                <div class="hamburger" onclick="toggleMobileMenu()">
+                    <span></span><span></span><span></span>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <section class="feedback-header">
+        <div class="container">
+            <label class="subtitle" style="color: var(--accent);">Your Opinion Matters</label>
+            <h1>Customer <span>Feedback</span></h1>
+            <p>Help us improve our services</p>
+        </div>
+    </section>
+
+    <!-- Feedback Form -->
+    <section class="feedback-section">
+        <div class="container">
+            <div class="feedback-form-card reveal fade-in-up">
+                <div class="section-title" style="text-align: center; margin-bottom: 3rem;">
+                    <h2>We Value Your <span>Feedback</span></h2>
+                    <p style="color: #666; margin-top: 1rem;">Please let us know about your experience with our services.</p>
+                </div>
+
+                <form id="feedbackForm" onsubmit="submitFeedback(event)">
+                    <div class="feedback-form-grid">
+                        <div class="feedback-form-group">
+                            <label>Full Name</label>
+                            <input type="text" id="feedbackName" placeholder="e.g. Priya" required>
+                        </div>
+                        <div class="feedback-form-group">
+                            <label>Email Address</label>
+                            <input type="email" id="feedbackEmail" placeholder="your@email.com" required>
+                        </div>
+                        <div class="feedback-form-group">
+                            <label>Phone Number</label>
+                            <input type="tel" id="feedbackPhone" placeholder="+91 XXXXX XXXXX">
+                        </div>
+                        <div class="feedback-form-group">
+                            <label>Service Date</label>
+                            <input type="date" id="feedbackDate" required>
+                        </div>
+                        
+                        <div class="feedback-form-group full-width" style="text-align: center; padding: 1rem 0;">
+                            <label style="font-size: 1rem; color: #000;">Overall Rating</label>
+                            <div class="star-rating-input" id="starInput" style="justify-content: center; margin-top: 1rem;">
+                                <span onmouseover="hoverRating(1)" onmouseout="clearHover()" onclick="setRating(1)">★</span>
+                                <span onmouseover="hoverRating(2)" onmouseout="clearHover()" onclick="setRating(2)">★</span>
+                                <span onmouseover="hoverRating(3)" onmouseout="clearHover()" onclick="setRating(3)">★</span>
+                                <span onmouseover="hoverRating(4)" onmouseout="clearHover()" onclick="setRating(4)">★</span>
+                                <span onmouseover="hoverRating(5)" onmouseout="clearHover()" onclick="setRating(5)">★</span>
+                            </div>
+                            <input type="hidden" id="feedbackRating" value="5">
+                        </div>
+
+                        <div class="feedback-form-group full-width">
+                            <label>What did you like most?</label>
+                            <textarea id="feedbackPositive" placeholder="Tell us what you enjoyed..." required></textarea>
+                        </div>
+                        <div class="feedback-form-group full-width">
+                            <label>How can we improve?</label>
+                            <textarea id="feedbackImprove" placeholder="Let us know what we could do better..."></textarea>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn primary" style="width: 100%; text-align: center; font-size: 1.1rem; padding: 1.2rem;">Submit Feedback</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Feedback Display Section -->
+    <section class="feedback-display-section" style="padding: 4rem 0 8rem; background: #FFF;">
+        <div class="container">
+            <div class="section-title" style="text-align: center; margin-bottom: 3rem;">
+                <h2>What Others Are <span>Saying</span></h2>
+            </div>
+            
+            <div id="feedbackListGrid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem;">
+                <!-- Feedbacks will be dynamically injected here -->
+                <div style="text-align: center; grid-column: 1 / -1; color: #999;">Loading...</div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <p>&copy; 2026 Divya's Studio. All rights reserved.</p>
+    </footer>
+
+    <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore-compat.js"></script>
+    <script src="script.js"></script>
+    <script>
+        let currentRating = 5;
+
+        function updateStars(rating, isHover = false) {
+            const stars = document.querySelectorAll('.star-rating-input span');
+            stars.forEach((star, index) => {
+                if (isHover) {
+                    if (index < rating) {
+                        star.style.color = '#000';
+                    } else {
+                        star.style.color = '#CCC';
+                    }
+                } else {
+                    if (index < rating) {
+                        star.classList.add('active');
+                        star.style.color = '#000';
+                    } else {
+                        star.classList.remove('active');
+                        star.style.color = '#CCC';
+                    }
+                }
+            });
+        }
+
+        function setRating(n) {
+            currentRating = n;
+            document.getElementById('feedbackRating').value = n;
+            updateStars(n);
+        }
+
+        function hoverRating(n) {
+            updateStars(n, true);
+        }
+
+        function clearHover() {
+            updateStars(currentRating);
+        }
+
+        // Initialize stars
+        setRating(5);
+
+        async function submitFeedback(e) {
+            e.preventDefault();
+            const name = document.getElementById('feedbackName').value.trim();
+            const email = document.getElementById('feedbackEmail').value.trim();
+            const phone = document.getElementById('feedbackPhone').value.trim();
+            const date = document.getElementById('feedbackDate').value;
+            const rating = parseInt(document.getElementById('feedbackRating').value);
+            const positive = document.getElementById('feedbackPositive').value.trim();
+            const improve = document.getElementById('feedbackImprove').value.trim();
+
+            if (!name || !email || !positive || !date) {
+                alert('Please fill in required fields.');
+                return;
+            }
+
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            submitBtn.innerText = 'Submitting...';
+            submitBtn.disabled = true;
+
+            try {
+                if (typeof db !== 'undefined' && db && db.collection) {
+                    await db.collection('feedback').add({
+                        name,
+                        email,
+                        phone,
+                        date,
+                        rating,
+                        positive,
+                        improve,
+                        createdAt: Date.now()
+                    });
+                } else {
+                    // Simulate submission if DB not available or not initialized
+                    await new Promise(r => setTimeout(r, 800));
+                }
+                alert('Thank you for your valuable feedback! 🙏');
+                e.target.reset();
+                setRating(5);
+            } catch (err) {
+                alert('Failed to submit feedback: ' + err.message);
+                console.error(err);
+            } finally {
+                submitBtn.innerText = 'Submit Feedback';
+                submitBtn.disabled = false;
+            }
+        }
+
+        async function loadFeedbackList() {
+            if (typeof db === 'undefined' || !db) return;
+            const grid = document.getElementById('feedbackListGrid');
+            try {
+                const snapshot = await db.collection('feedback').orderBy('createdAt', 'desc').get();
+                if (snapshot.empty) {
+                    grid.innerHTML = '<div style="text-align:center; grid-column:1/-1; color:#999;">No feedback yet.</div>';
+                    return;
+                }
+
+                let htmlContent = '';
+                snapshot.forEach(doc => {
+                    const item = doc.data();
+                    const initial = (item.name || 'A').charAt(0).toUpperCase();
+                    const stars = '★'.repeat(item.rating || 5) + '☆'.repeat(5 - (item.rating || 5));
+                    const dateStr = item.date || (item.createdAt ? new Date(item.createdAt).toLocaleDateString() : '');
+                    
+                    htmlContent += `
+                        <div style="background:#F9F9F9; padding:2rem; border:1px solid #EEE; box-shadow:0 5px 15px rgba(0,0,0,0.02); display:flex; flex-direction:column; justify-content:space-between; border-radius:8px;">
+                            <div>
+                                <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:1rem;">
+                                    <div style="display:flex; align-items:center; gap:1rem;">
+                                        <div style="width:40px; height:40px; border-radius:50%; background:var(--bg-dark); color:var(--white); display:flex; align-items:center; justify-content:center; font-weight:900;">${initial}</div>
+                                        <div>
+                                            <div style="font-weight:700; font-size:0.9rem;">${item.name || 'Anonymous'}</div>
+                                            <div style="font-size:0.7rem; color:var(--text-muted); opacity:0.8;">${dateStr}</div>
+                                        </div>
+                                    </div>
+                                    <div style="color:#D4AF37; font-size:1.1rem; letter-spacing:1px;">${stars}</div>
+                                </div>
+                                <div style="font-size:0.9rem; color:#555; line-height:1.6;">
+                                    <strong>Liked:</strong> ${item.positive}
+                                    ${item.improve ? `<br><span style="color:#888; font-size:0.85rem; margin-top:0.5rem; display:block;"><strong>Improvements:</strong> ${item.improve}</span>` : ''}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                grid.innerHTML = htmlContent;
+            } catch(e) {
+                console.error("Error loading feedback", e);
+                grid.innerHTML = '<div style="text-align:center; grid-column:1/-1; color:#FF0000;">Could not load feedback at this time.</div>';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(loadFeedbackList, 1000); // 1s delay to let Firebase initialize clearly
+        });
+    </script>
+</body>
+</html>
