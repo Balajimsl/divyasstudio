@@ -166,6 +166,29 @@
             </div>
         </section>
 
+        <!-- Testimonials Section -->
+        <section id="testimonials" class="testimonials">
+            <div class="container">
+                <div class="section-title">
+                    <label>Client Stories</label>
+                    <h2>What Our Clients <span>Say</span></h2>
+                    <p style="text-transform: none; max-width: 600px; margin: 1rem auto; color: var(--text-muted);">Hear from our valued clients about their experiences and satisfaction with our exceptional beauty services.</p>
+                </div>
+                
+                <div class="testimonial-slider-wrapper">
+                    <button class="slider-btn prev-btn" onclick="moveTestimonialSlider(-1)" aria-label="Previous Testimonial">❮</button>
+                    <div class="testimonial-slider-container">
+                        <div class="testimonial-slider" id="homeTestimonialSlider">
+                            <!-- Feedback dynamically loaded from Firebase -->
+                            <div style="text-align: center; width: 100%; color: #999;">Loading stories...</div>
+                        </div>
+                    </div>
+                    <button class="slider-btn next-btn" onclick="moveTestimonialSlider(1)" aria-label="Next Testimonial">❯</button>
+                </div>
+                
+                <div class="testimonial-dots" id="homeTestimonialDots"></div>
+            </div>
+        </section>
 
         <!-- Contact Section -->
         <section id="contact" class="contact">
@@ -206,6 +229,9 @@
         }
     </script>
     
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore-compat.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

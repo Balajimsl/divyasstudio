@@ -190,3 +190,166 @@ function toggleMobileMenu() {
         hamburger.classList.toggle('toggle');
     }
 }
+
+// Testimonial Slider Logic
+let currentSlide = 0;
+let totalSlides = 0;
+let cardsPerView = 3;
+
+async function initTestimonialSlider() {
+    const sliderContainer = document.getElementById('homeTestimonialSlider');
+    const dotsContainer = document.getElementById('homeTestimonialDots');
+    if (!sliderContainer) return; // Not on home page
+
+    try {
+        const feedbackData = await getFirebaseData('feedback');
+        
+        // Filter out highly rated only (e.g., 4 or 5 stars) and sort by newest
+        const validFeedback = feedbackData
+            .filter(f => f.rating >= 4 && f.positive)
+            .sort((a, b) => b.createdAt - a.createdAt);
+
+        if (validFeedback.length === 0) {
+            sliderContainer.innerHTML = '<div style="text-align:center; width:100%; color:#999; padding: 2rem;">No stories to show yet. Be the first to leave feedback!</div>';
+            
+            // Hide navigation if no feedback
+            const wrapper = document.querySelector('.testimonial-slider-wrapper');
+            if(wrapper) {
+                const btns = wrapper.querySelectorAll('.slider-btn');
+                btns.forEach(btn => btn.style.display = 'none');
+            }
+            return;
+        }
+
+        let htmlContent = '';
+        validFeedback.slice(0, 10).forEach(item => { // Show max 10
+            const initial = (item.name || 'A').charAt(0).toUpperCase();
+            
+            // Limit text size
+            let text = item.positive;
+            if (text.length > 150) {
+                text = text.substring(0, 150) + '...';
+            }
+
+            const dateStr = item.date || (item.createdAt ? new Date(item.createdAt).toLocaleDateString() : '');
+            
+            htmlContent += `
+                <div class="testimonial-card-wrapper">
+                    <div class="testimonial-card">
+                        <div class="quote-icon">"</div>
+                        <h3 class="testimonial-title">${item.rating === 5 ? 'Exceptional Service!' : 'Great Experience!'}</h3>
+                        <p class="testimonial-text">"${text}"</p>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">${initial}</div>
+                            <div class="author-info">
+                                <h4>${item.name || 'Anonymous'}</h4>
+                                <p>Client</p>
+                            </div>
+                            <div class="author-date">${dateStr}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+
+        sliderContainer.innerHTML = htmlContent;
+        
+        // Wait for rendering then setup
+        setTimeout(setupSlider, 100);
+
+    } catch (e) {
+        console.error("Error loading testimonials:", e);
+        sliderContainer.innerHTML = '<div style="text-align:center; width:100%; color:#FF0000;">Could not load stories.</div>';
+    }
+}
+
+function setupSlider() {
+    const wrapper = document.querySelector('.testimonial-slider-wrapper');
+    const slider = document.getElementById('homeTestimonialSlider');
+    if (!slider) return;
+    const cards = slider.querySelectorAll('.testimonial-card-wrapper');
+    
+    if (cards.length === 0) return;
+
+    function updateCardsPerView() {
+        if (window.innerWidth <= 576) cardsPerView = 1;
+        else if (window.innerWidth <= 968) cardsPerView = 2;
+        else cardsPerView = 3;
+        
+        // E.g. 5 cards, 3 per view -> max slide is 2
+        totalSlides = Math.max(0, cards.length - cardsPerView);
+        currentSlide = Math.min(currentSlide, totalSlides); // adjust if resized
+        updateSliderPosition();
+        createDots();
+    }
+
+    window.addEventListener('resize', updateCardsPerView);
+    updateCardsPerView(); // Initial call
+    
+    // Auto-advance
+    if(totalSlides > 0) {
+        setInterval(() => {
+            if (currentSlide < totalSlides) {
+                moveTestimonialSlider(1);
+            } else {
+                goToSlide(0);
+            }
+        }, 7000); // Increased reading time
+    }
+}
+
+function createDots() {
+    const dotsContainer = document.getElementById('homeTestimonialDots');
+    if(!dotsContainer) return;
+    dotsContainer.innerHTML = '';
+    
+    if (totalSlides <= 0) return; // don't show dots if everything fits
+
+    for (let i = 0; i <= totalSlides; i++) {
+        const dot = document.createElement('div');
+        dot.className = `dot ${i === currentSlide ? 'active' : ''}`;
+        dot.onclick = () => goToSlide(i);
+        dotsContainer.appendChild(dot);
+    }
+}
+
+function updateDots() {
+    const dots = document.querySelectorAll('#homeTestimonialDots .dot');
+    dots.forEach((dot, index) => {
+        dot.className = `dot ${index === currentSlide ? 'active' : ''}`;
+    });
+}
+
+function updateSliderPosition() {
+    const slider = document.getElementById('homeTestimonialSlider');
+    if(!slider) return;
+    
+    let wrapEl = document.querySelector('.testimonial-card-wrapper');
+    if(!wrapEl) return;
+    
+    // CSS gap is 2rem (approx 32px based on 16px body font)
+    const gap = 32; 
+    let cardWidth = wrapEl.offsetWidth;
+    
+    slider.style.transform = `translateX(-${currentSlide * (cardWidth + gap)}px)`;
+}
+
+window.moveTestimonialSlider = function(direction) {
+    currentSlide += direction;
+    if (currentSlide < 0) currentSlide = 0;
+    if (currentSlide > totalSlides) currentSlide = totalSlides;
+    
+    updateSliderPosition();
+    updateDots();
+}
+
+function goToSlide(index) {
+    currentSlide = index;
+    updateSliderPosition();
+    updateDots();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Tiny delay to let firebase complete initialization
+    setTimeout(initTestimonialSlider, 300);
+});
